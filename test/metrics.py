@@ -31,7 +31,7 @@ def get_test_loader():
         )
     ])
 
-    test_dataset = datasets.ImageFolder(DATA_ROOT / "test", transform=transform)
+    test_dataset = datasets.ImageFolder(DATA_ROOT, transform=transform)
     test_loader = DataLoader(
         test_dataset,
         batch_size=BATCH_SIZE,
@@ -75,16 +75,13 @@ def main():
     model = load_model(len(class_names))
     labels, preds = get_predictions(model, test_loader)
 
-    print(f"Test images: {len(labels)}")
-    print(f"Classes: {list(class_names)}")
-
-    print(f"\nOverall Metrics (macro-averaged)")
+    print(f"Overall Metrics\n")
     print(f"Accuracy:  {accuracy_score(labels, preds):.4f}")
     print(f"Precision: {precision_score(labels, preds, average='macro', zero_division=0):.4f}")
     print(f"Recall:    {recall_score(labels, preds, average='macro', zero_division=0):.4f}")
     print(f"F1 Score:  {f1_score(labels, preds, average='macro', zero_division=0):.4f}")
 
-    print(f"\nPer-Class Report")
+    print(f"Per-Class Report\n")
     print(classification_report(labels, preds, target_names=class_names))
 
     print("Confusion Matrix")
