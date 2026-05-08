@@ -10,7 +10,7 @@ import matplotlib.cm as cm
 import numpy as np
 
 
-MODEL_PATH = Path(r"F:\College\DataScience\CNNRetina\cnn_oct_model3.pth")
+MODEL_PATH = Path(r"F:\College\DataScience\CNNRetina\cnn_oct_model.pth")
 DATA_DIR = Path(r"F:\College\DataScience\CNNRetina\data\preprocesseddata\test")
 OUTPUT_DIR = Path(r"F:\College\DataScience\CNNRetina\gradcam_output")
 NUM_IMAGES = 350

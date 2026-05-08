@@ -3,12 +3,14 @@ from pathlib import Path
 import torch
 import torch.nn as nn
 import numpy as np
-import matplotlib.pyplot as plt
 
 from torch.utils.data import DataLoader
 from torchvision import datasets, transforms
 from torchvision.models import densenet121
-from sklearn.metrics import confusion_matrix, classification_report
+from sklearn.metrics import (
+    accuracy_score, precision_score, recall_score, f1_score,
+    classification_report, confusion_matrix
+)
 
 
 DATA_ROOT = Path(r"F:\College\DataScience\CNNRetina\data\preprocesseddata\test")
@@ -19,7 +21,7 @@ DEVICE = torch.device("cuda")
 
 
 def get_test_loader():
-    test_transform = transforms.Compose([
+    transform = transforms.Compose([
         transforms.Grayscale(num_output_channels=3),
         transforms.Resize((224, 224)),
         transforms.ToTensor(),
@@ -29,7 +31,7 @@ def get_test_loader():
         )
     ])
 
-    test_dataset = datasets.ImageFolder(DATA_ROOT, transform=test_transform)
+    test_dataset = datasets.ImageFolder(DATA_ROOT / "test", transform=transform)
     test_loader = DataLoader(
         test_dataset,
         batch_size=BATCH_SIZE,
@@ -68,41 +70,25 @@ def get_predictions(model, loader):
     return np.array(all_labels), np.array(all_preds)
 
 
-def plot_confusion_matrix(labels, preds, class_names):
-    cm = confusion_matrix(labels, preds)
-    num_classes = len(class_names)
-
-    fig, ax = plt.subplots(figsize=(10, 8))
-    im = ax.imshow(cm, cmap="Blues")
-
-    ax.set_xticks(range(num_classes))
-    ax.set_yticks(range(num_classes))
-    ax.set_xticklabels(class_names, rotation=45, ha="right")
-    ax.set_yticklabels(class_names)
-
-    for i in range(num_classes):
-        for j in range(num_classes):
-            color = "white" if cm[i, j] > cm.max() / 2 else "black"
-            ax.text(j, i, str(cm[i, j]), ha="center", va="center", color=color)
-
-    ax.set_xlabel("Predicted")
-    ax.set_ylabel("Actual")
-    ax.set_title("Confusion Matrix - DenseNet121 OCT Classification")
-    fig.colorbar(im)
-
-    plt.tight_layout()
-    plt.savefig("confusion_matrix.png", dpi=150)
-    plt.show()
-
-
 def main():
     test_loader, class_names = get_test_loader()
-    model = load_model(num_classes=len(class_names))
+    model = load_model(len(class_names))
     labels, preds = get_predictions(model, test_loader)
 
+    print(f"Test images: {len(labels)}")
+    print(f"Classes: {list(class_names)}")
+
+    print(f"\nOverall Metrics (macro-averaged)")
+    print(f"Accuracy:  {accuracy_score(labels, preds):.4f}")
+    print(f"Precision: {precision_score(labels, preds, average='macro', zero_division=0):.4f}")
+    print(f"Recall:    {recall_score(labels, preds, average='macro', zero_division=0):.4f}")
+    print(f"F1 Score:  {f1_score(labels, preds, average='macro', zero_division=0):.4f}")
+
+    print(f"\nPer-Class Report")
     print(classification_report(labels, preds, target_names=class_names))
 
-    plot_confusion_matrix(labels, preds, class_names)
+    print("Confusion Matrix")
+    print(confusion_matrix(labels, preds))
 
 
 if __name__ == "__main__":

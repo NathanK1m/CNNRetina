@@ -91,12 +91,6 @@ def pad_top_bottom_random(img: Image.Image, img_path: Path, input_root: Path) ->
 def process_dataset(input_root: Path, output_root: Path):
     image_paths = list(input_root.rglob("*.jpg"))
 
-    if not image_paths:
-        print(f"No images found in: {input_root}")
-        return
-
-    print(f"Found {len(image_paths)} images.")
-
     for i, img_path in enumerate(image_paths, start=1):
         relative = img_path.relative_to(input_root)
         dest = output_root / relative
@@ -109,8 +103,6 @@ def process_dataset(input_root: Path, output_root: Path):
 
         if i % 500 == 0:
             print(f"Processed {i}/{len(image_paths)} images")
-
-    print(f"Done! {len(image_paths)} images processed.")
 
 
 if __name__ == "__main__":

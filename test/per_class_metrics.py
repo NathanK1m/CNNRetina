@@ -12,7 +12,7 @@ from sklearn.metrics import precision_score, recall_score, f1_score
 
 
 DATA_ROOT = Path(r"F:\College\DataScience\CNNRetina\data\preprocesseddata\test")
-MODEL_PATH = Path(r"F:\College\DataScience\CNNRetina\cnn_oct_model3.pth")
+MODEL_PATH = Path(r"F:\College\DataScience\CNNRetina\cnn_oct_model.pth")
 
 BATCH_SIZE = 32
 DEVICE = torch.device("cuda")
